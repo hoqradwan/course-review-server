@@ -10,6 +10,7 @@ import { courseRoutes } from './modules/course/course.route';
 import { categoryRoutes } from './modules/category/category.route';
 import globalErrorHandler from './app/middlewares/globalErrorHandler';
 import { reviewRoutes } from './modules/review/review.route';
+import { userRoutes } from './modules/user/user.route';
 
 const app: Application = express();
 
@@ -21,6 +22,7 @@ app.use(cors());
 app.use('/api', courseRoutes);
 app.use('/api', categoryRoutes);
 app.use('/api', reviewRoutes);
+app.use('/api', userRoutes);
 
 const test = async (req: Request, res: Response) => {
   const a = 10;

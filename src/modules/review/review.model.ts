@@ -1,4 +1,4 @@
-import { Schema, model } from 'mongoose';
+import mongoose, { Schema, model } from 'mongoose';
 import { TReview } from './review.interface';
 
 // Interface for Review Schema
@@ -21,6 +21,11 @@ const reviewSchema = new Schema<TReview>({
         type: String,
         required: true,
     },
+    createdBy: {
+        type: mongoose.Schema.Types.ObjectId,
+        ref: 'User', // referring to category model
+        required: true
+    }
 });
 
 // Mongoose Model for Review

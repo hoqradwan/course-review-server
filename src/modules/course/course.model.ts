@@ -64,6 +64,11 @@ const courseSchema = new mongoose.Schema<TCourse>({
         type: Number,
     },
     details: detailsSchema,
+    createdBy: {
+        type: mongoose.Schema.Types.ObjectId,
+        ref: 'User', // referring to category model
+        required: true
+    }
 });
 courseSchema.pre('save', function (next) {
     const start = new Date(this.startDate);

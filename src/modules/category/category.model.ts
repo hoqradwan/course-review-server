@@ -1,4 +1,4 @@
-import { Schema, model } from "mongoose";
+import mongoose, { Schema, model } from "mongoose";
 import { TCategory } from "./category.interface";
 
 
@@ -9,6 +9,11 @@ const categorySchema = new Schema<TCategory>({
         required: true,
         unique: true,
     },
+    createdBy: {
+        type: mongoose.Schema.Types.ObjectId,
+        ref: 'User', // referring to category model
+        required: true
+    }
 });
 
 export const Category = model<TCategory>('Category', categorySchema);
