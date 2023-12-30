@@ -14,36 +14,17 @@ const loginUser = async (payload: TLoginUser) => {
     const { username } = payload;
     // checking if the user is exist
     const user = await User.findOne({ username }).select('+password');
-    console.log(user)
+    // console.log(user?.password, user?._id)
 
     if (!user) {
         throw new AppError(httpStatus.NOT_FOUND, 'This user is not found !');
     }
-    // console.log('Provided Password:', payload.password);
-    // console.log('User Password:', user.password);
     const isPasswordMatched = await bcrypt.compare(payload.password, user.password);
-    console.log(isPasswordMatched)
+    // console.log(isPasswordMatched)
     if (!isPasswordMatched) {
         throw new AppError(httpStatus.FORBIDDEN, 'Password do not matched');
     }
 
-
-    // const jwtPayload: {
-    //     id: string;      // Make sure the type matches the expected type for id
-    //     email: string;   // Make sure the type matches the expected type for email
-    //     role: string;    // Make sure the type matches the expected type for role
-    // } = {
-    //     id: user._id,    // Assuming user._id is a string
-    //     email: user.email,
-    //     role: user.role,
-    // };
-
-
-    // const accessToken = createToken(
-    //     jwtPayload,
-    //     config.jwt_access_secret as string,
-    //     config.jwt_access_expires_in as string,
-    // );
     const jwtPlayload = {
         _id: user._id,
         username: user.username,
@@ -61,35 +42,64 @@ const loginUser = async (payload: TLoginUser) => {
     };
 };
 
+// const changePassword = async (
+//     userData: JwtPayload,
+//     payload: { currentPassword: string; newPassword: string },
+// ) => {
+//     // const user = await User.findOne({ _id: userData._id }).select(
+//     //     '+password',
+//     // );
+//     // checking if the user is exist
+//     const user = await User.findOne(userData.userId).select('+password');
+//     // console.log(userData.userId);
+//     if (!user) {
+//         throw new AppError(httpStatus.NOT_FOUND, 'This user is not found !');
+//     }
+
+//     //checking if the password is correct
+//     const isPasswordMatched = await bcrypt.compare(payload.currentPassword, user.password);
+
+
+//     if (!isPasswordMatched) {
+//         throw new AppError(httpStatus.FORBIDDEN, 'Password does not match');
+//     }
+
+
+//     //hash new password
+//     const newHashedPassword = await bcrypt.hash(
+//         payload.newPassword,
+//         Number(config.bcrypt_salt_rounds),
+//     );
+//     user.password = newHashedPassword;
+//     await user.save();
+
+//     return user;
+// };
 const changePassword = async (
     userData: JwtPayload,
     payload: { currentPassword: string; newPassword: string },
 ) => {
-    // const user = await User.findOne({ _id: userData._id }).select(
-    //     '+password',
-    // );
-    // checking if the user is exist
-    const user = await User.findOne(userData.userId).select('+password');
+    // Find the user and select the hashed password
+    const user = await User.findOne({ _id: userData._id }).select('+password');
+
+    // Check if the user exists
     if (!user) {
-        throw new AppError(httpStatus.NOT_FOUND, 'This user is not found !');
+        throw new AppError(httpStatus.NOT_FOUND, 'This user is not found!');
     }
 
-    //checking if the password is correct
+    // Check if the current password is correct
     const isPasswordMatched = await bcrypt.compare(payload.currentPassword, user.password);
-
 
     if (!isPasswordMatched) {
         throw new AppError(httpStatus.FORBIDDEN, 'Password does not match');
     }
 
-
-    //hash new password
-    const newHashedPassword = await bcrypt.hash(
-        payload.newPassword,
-        Number(config.bcrypt_salt_rounds),
+    // Hash and update the new password directly in the query
+    const newHashedPassword = await bcrypt.hash(payload.newPassword, Number(config.bcrypt_salt_rounds));
+    await User.findOneAndUpdate(
+        { _id: user._id },
+        { password: newHashedPassword }
     );
-    user.password = newHashedPassword;
-    await user.save();
 
     return user;
 };

@@ -61,5 +61,4 @@ export const userControllers = {
     register,
     loginUser,
     changePassword
-
 };
