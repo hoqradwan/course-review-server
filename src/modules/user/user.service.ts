@@ -45,10 +45,16 @@ const loginUser = async (payload: TLoginUser) => {
     }
 
 
-    const jwtPayload = {
-        userId: user._id,
+    const jwtPayload: {
+        id: string;      // Make sure the type matches the expected type for id
+        email: string;   // Make sure the type matches the expected type for email
+        role: string;    // Make sure the type matches the expected type for role
+    } = {
+        id: user._id,    // Assuming user._id is a string
+        email: user.email,
         role: user.role,
     };
+
 
     const accessToken = createToken(
         jwtPayload,

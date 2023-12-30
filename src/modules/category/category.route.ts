@@ -6,7 +6,7 @@ import { USER_ROLE } from "../user/user.constant";
 import auth from "../../app/middlewares/auth";
 const router = express.Router();
 
-router.post('/categories', auth('admin'), validateRequest(categoryValidations.createCategoryValidationSchema), categoryControllers.createCategory);
+router.post('/categories', auth(USER_ROLE.admin), validateRequest(categoryValidations.createCategoryValidationSchema), categoryControllers.createCategory);
 router.get('/categories', categoryControllers.getAllCategories);
 
 export const categoryRoutes = router;

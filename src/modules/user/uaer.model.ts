@@ -47,13 +47,6 @@ userSchema.statics.isUserExists = async function (username: string) {
     const existingUser = await User.findOne({ username })
     return existingUser;
 }
-// userSchema.statics.isPasswordMatched = async function (plainTextPassword, hashedPassword) {
-//     await bcrypt.compare(plainTextPassword, hashedPassword);
-// }
-// userSchema.statics.isJWTIssuedBeforePasswordChanged = function (passwordChangedTimestamp: Date, jwtIssuedTimestamp: number) {
-//     const passwordChangedTime = new Date(passwordChangedTimestamp).getTime() / 1000;
-//     return passwordChangedTime > jwtIssuedTimestamp;
-// }
 const User = mongoose.model<TUser, UserModel>('User', userSchema);
 
 export default User;
