@@ -21,11 +21,10 @@ const auth = (...requiredRoles: TUserRole[]) => {
             token,
             config.jwt_access_secret as string,
         ) as JwtPayload;
-
-        const { role, userId, iat } = decoded;
+        const { userId, role } = decoded;
 
         // checking if the user is exist
-        const user = await User.isUserExistsByCustomId(userId);
+        const user = await User.findById(userId);
 
         if (!user) {
             throw new AppError(httpStatus.NOT_FOUND, 'This user is not found !');

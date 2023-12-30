@@ -23,6 +23,8 @@ const userSchema = new Schema<TUser, UserModel>({
         enum: ['user', 'admin'],
         default: 'user',
     },
+}, {
+    timestamps: true
 });
 
 userSchema.pre('save', async function (next) {
@@ -41,16 +43,17 @@ userSchema.post('save', function (doc, next) {
     doc.password = '';
     next();
 });
-userSchema.statics.isUserExistsByCustomId = async function (id: string) {
-    return await User.findOne({ id }).select('+password');
+userSchema.statics.isUserExists = async function (username: string) {
+    const existingUser = await User.findOne({ username })
+    return existingUser;
 }
-userSchema.statics.isPasswordMatched = async function (plainTextPassword, hashedPassword) {
-    await bcrypt.compare(plainTextPassword, hashedPassword);
-}
-userSchema.statics.isJWTIssuedBeforePasswordChanged = function (passwordChangedTimestamp: Date, jwtIssuedTimestamp: number) {
-    const passwordChangedTime = new Date(passwordChangedTimestamp).getTime() / 1000;
-    return passwordChangedTime > jwtIssuedTimestamp;
-}
+// userSchema.statics.isPasswordMatched = async function (plainTextPassword, hashedPassword) {
+//     await bcrypt.compare(plainTextPassword, hashedPassword);
+// }
+// userSchema.statics.isJWTIssuedBeforePasswordChanged = function (passwordChangedTimestamp: Date, jwtIssuedTimestamp: number) {
+//     const passwordChangedTime = new Date(passwordChangedTimestamp).getTime() / 1000;
+//     return passwordChangedTime > jwtIssuedTimestamp;
+// }
 const User = mongoose.model<TUser, UserModel>('User', userSchema);
 
 export default User;

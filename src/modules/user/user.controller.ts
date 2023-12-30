@@ -7,10 +7,17 @@ const register = catchAsync(async (req, res) => {
     const result = await userServices.register(req.body);
 
     sendResponse(res, {
-        statusCode: httpStatus.OK,
+        statusCode: httpStatus.CREATED,
         success: true,
-        message: 'User is logged in succesfully!',
-        data: result
+        message: 'User registered succesfully!',
+        data: {
+            _id: result._id,
+            username: result.username,
+            email: result.email,
+            role: result.role,
+            createdAt: result?.createdAt,
+            updatedAt: result?.updatedAt
+        }
     });
 });
 const loginUser = catchAsync(async (req, res) => {
@@ -25,20 +32,26 @@ const loginUser = catchAsync(async (req, res) => {
 });
 
 const changePassword = catchAsync(async (req, res) => {
-    const { ...passwordData } = req.body;
-
-    const result = await userServices.changePassword(req.user, passwordData);
+    // const { ...passwordData } = req.body;
+    const result = await userServices.changePassword(req.user, req.body);
     sendResponse(res, {
         statusCode: httpStatus.OK,
         success: true,
-        message: 'Password is updated succesfully!',
-        data: result,
+        message: 'Password changed successfully',
+        data: {
+            _id: result._id,
+            username: result.username,
+            email: result.email,
+            role: result.role,
+            createdAt: result.createdAt,
+            updatedAt: result.updatedAt
+        },
     });
 });
 
 export const userControllers = {
     register,
     loginUser,
-    changePassword,
+    changePassword
 
 };
