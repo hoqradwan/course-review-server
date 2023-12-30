@@ -23,9 +23,10 @@ const reviewSchema = new Schema<TReview>({
     },
     createdBy: {
         type: mongoose.Schema.Types.ObjectId,
-        ref: 'User', // referring to category model
-        required: true
+        ref: 'User',
     }
+}, {
+    timestamps: true
 });
 
 // Mongoose Model for Review

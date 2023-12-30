@@ -24,24 +24,11 @@ const auth = (...requiredRoles: TUserRole[]) => {
         const { userId, role } = decoded;
 
         // checking if the user is exist
-        const user = await User.findOne(userId);
-        console.log(user)
+        const user = await User.findOne({ userId });
+        // console.log(user)
         if (!user) {
             throw new AppError(httpStatus.NOT_FOUND, 'This user is not found !');
         }
-
-
-
-
-        // if (
-        //     user.passwordChangedAt &&
-        //     User.isJWTIssuedBeforePasswordChanged(
-        //         user.passwordChangedAt,
-        //         iat as number,
-        //     )
-        // ) {
-        //     throw new AppError(httpStatus.UNAUTHORIZED, 'You are not authorized !');
-        // }
 
         if (requiredRoles && !requiredRoles.includes(role)) {
             throw new AppError(

@@ -1,8 +1,20 @@
 import mongoose, { Schema } from 'mongoose';
-import { TUser, UserModel } from './user.interface';
+import { PasswordChangeHistory, TUser, UserModel } from './user.interface';
 import bcrypt from 'bcrypt';
 import config from '../../app/config';
-
+const PasswordChangeHistorySchema = new Schema<PasswordChangeHistory>(
+    {
+        hashedPassword: {
+            type: String,
+            required: true,
+        },
+        timestamp: {
+            type: Date,
+            default: Date.now,
+        },
+    },
+    { _id: false } // This ensures that Mongoose won't create a separate _id for each history entry
+);
 const userSchema = new Schema<TUser, UserModel>({
     username: {
         type: String,
@@ -23,6 +35,8 @@ const userSchema = new Schema<TUser, UserModel>({
         enum: ['user', 'admin'],
         default: 'user',
     },
+    passwordChangeHistory: [PasswordChangeHistorySchema]
+
 }, {
     timestamps: true
 });

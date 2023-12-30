@@ -4,6 +4,7 @@ import { Review } from "./review.model";
 
 const createReviewIntoDB = async (payload: TReview) => {
     const result = await Review.create(payload);
+    await result.populate('createdBy', '_id username email role');
     return result;
 }
 const getBestCourseFromDB = async () => {

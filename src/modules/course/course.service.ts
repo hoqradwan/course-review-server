@@ -2,6 +2,7 @@
 import mongoose from "mongoose";
 import { TCourse } from "./course.interface";
 import { Course } from "./course.model";
+import { Review } from "../review/review.model";
 
 const createCourseIntoDB = async (payload: TCourse) => {
     const result = await Course.create(payload);
@@ -55,6 +56,7 @@ const getAllCoursesFromDB = async (query: Record<string, unknown>) => {
 
 
     const courses = await Course.find(filter)
+        .populate({ path: "createdBy", select: '_id username email role' })
         .sort(sortOptions)
         .skip((page - 1) * limit)
         .limit(parseInt(limit as string, 10))
@@ -69,29 +71,38 @@ const getAllCoursesFromDB = async (query: Record<string, unknown>) => {
 
     return { courses, metadata };
 }
+// const getSingleCourseWithReviewFromDB = async (courseId: string) => {
+//     const coursesWithReviews = await Course.aggregate([
+//         {
+//             $match: {
+//                 _id: new mongoose.Types.ObjectId(courseId),
+//             },
+//         },
+//         {
+//             $lookup: {
+//                 from: 'reviews',
+//                 localField: '_id',
+//                 foreignField: 'courseId',
+//                 as: 'reviews',
+//             },
+//         },
+//     ])
+//     return coursesWithReviews;
+// }
 const getSingleCourseWithReviewFromDB = async (courseId: string) => {
-    const coursesWithReviews = await Course.aggregate([
-        {
-            $match: {
-                _id: new mongoose.Types.ObjectId(courseId),
-            },
-        },
-        {
-            $lookup: {
-                from: 'reviews',
-                localField: '_id',
-                foreignField: 'courseId',
-                as: 'reviews',
-            },
-        },
-        {
-            $project: {
-                __v: 0
-            }
-        }
-    ])
-    return coursesWithReviews;
-}
+    const course = await Course.findById(courseId).populate({ path: "createdBy", select: '_id username email role' });
+
+    if (!course) {
+        throw new Error('Course not found');
+    }
+
+    const reviews = await Review.find({ courseId: course._id }).populate({ path: "createdBy", select: '_id username email role' });
+
+    return {
+        course,
+        reviews,
+    };
+};
 const updateCourseIntoDB = async (courseId: string, payload: Partial<TCourse>) => {
     const { details, ...remainingUpdateData } = payload;
     const modifiedUpdatedData: Record<string, unknown> = {

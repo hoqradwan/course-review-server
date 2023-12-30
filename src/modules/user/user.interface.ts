@@ -1,12 +1,16 @@
 import { Model } from "mongoose";
 import { USER_ROLE } from "./user.constant";
-
+export type PasswordChangeHistory = {
+    hashedPassword: string;
+    timestamp: Date;
+}
 export type TUser = {
-    _id: any;
+    _id: string;
     username: string;
     email: string;
     password: string;
     role: 'user' | 'admin';
+    passwordChangeHistory: PasswordChangeHistory[];
     createdAt?: string;
     updatedAt?: string;
 }
