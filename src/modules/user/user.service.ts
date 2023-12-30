@@ -48,8 +48,8 @@ const changePassword = async (
     payload: { currentPassword: string; newPassword: string },
 ) => {
     // Find the user and select the hashed password
-    const user = await User.findOne({ _id: userData._id }).select('+password');
-
+    const user = await User.findOne({ _id: userData._id }).select('+password +passwordChangeHistory');
+    console.log(user)
     // Check if the user exists
     if (!user) {
         throw new AppError(httpStatus.NOT_FOUND, 'This user is not found!');
@@ -61,9 +61,22 @@ const changePassword = async (
     if (!isPasswordMatched) {
         throw new AppError(httpStatus.FORBIDDEN, 'Password does not match');
     }
+    // Check if the new password is unique and different from the current and previous two passwords
+    const isNewPasswordValid = user.passwordChangeHistory.every((entry) => {
+        return !bcrypt.compareSync(payload.newPassword, entry.hashedPassword);
+    });
+
+    if (!isNewPasswordValid) {
+        throw new Error('New password does not meet the requirements');
+    }
 
     // Hash and update the new password directly in the query
     const newHashedPassword = await bcrypt.hash(payload.newPassword, Number(config.bcrypt_salt_rounds));
+    // Update the user's password and password change history
+    user.passwordChangeHistory.push({
+        hashedPassword: newHashedPassword,
+        timestamps: Date.now(),
+    });
     await User.findOneAndUpdate(
         { _id: user._id },
         { password: newHashedPassword }

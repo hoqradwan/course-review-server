@@ -8,7 +8,7 @@ const PasswordChangeHistorySchema = new Schema<PasswordChangeHistory>(
             type: String,
             required: true,
         },
-        timestamp: {
+        timestamps: {
             type: Date,
             default: Date.now,
         },

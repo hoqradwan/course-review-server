@@ -96,8 +96,8 @@ const getSingleCourseWithReviewFromDB = async (courseId: string) => {
         throw new Error('Course not found');
     }
 
-    const reviews = await Review.find({ courseId: course._id }).populate({ path: "createdBy", select: '_id username email role' });
-
+    const reviews = await Review.find({ courseId: course._id });
+    // select: '_id username email role'
     return {
         course,
         reviews,

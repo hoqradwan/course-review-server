@@ -3,7 +3,7 @@ import { Model } from "mongoose";
 import { USER_ROLE } from "./user.constant";
 export type PasswordChangeHistory = {
     hashedPassword: string;
-    timestamp: Date;
+    timestamps: Date;
 }
 export type TUser = {
     _id: string;
