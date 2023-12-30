@@ -5,4 +5,6 @@ export type TReview = {
     rating: number;
     review: string;
     createdBy: Types.ObjectId;
+    createdAt?: string;
+    updatedAt?: string;
 }

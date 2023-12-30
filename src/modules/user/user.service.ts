@@ -29,6 +29,7 @@ const loginUser = async (payload: TLoginUser) => {
         _id: user._id,
         username: user.username,
         role: user.role,
+        email: user.email
     };
     const accessToken = jwt.sign(
         jwtPlayload,
@@ -42,39 +43,6 @@ const loginUser = async (payload: TLoginUser) => {
     };
 };
 
-// const changePassword = async (
-//     userData: JwtPayload,
-//     payload: { currentPassword: string; newPassword: string },
-// ) => {
-//     // const user = await User.findOne({ _id: userData._id }).select(
-//     //     '+password',
-//     // );
-//     // checking if the user is exist
-//     const user = await User.findOne(userData.userId).select('+password');
-//     // console.log(userData.userId);
-//     if (!user) {
-//         throw new AppError(httpStatus.NOT_FOUND, 'This user is not found !');
-//     }
-
-//     //checking if the password is correct
-//     const isPasswordMatched = await bcrypt.compare(payload.currentPassword, user.password);
-
-
-//     if (!isPasswordMatched) {
-//         throw new AppError(httpStatus.FORBIDDEN, 'Password does not match');
-//     }
-
-
-//     //hash new password
-//     const newHashedPassword = await bcrypt.hash(
-//         payload.newPassword,
-//         Number(config.bcrypt_salt_rounds),
-//     );
-//     user.password = newHashedPassword;
-//     await user.save();
-
-//     return user;
-// };
 const changePassword = async (
     userData: JwtPayload,
     payload: { currentPassword: string; newPassword: string },

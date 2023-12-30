@@ -1,11 +1,12 @@
+import { JwtPayload } from "jsonwebtoken";
 import { Course } from "../course/course.model";
 import { TReview } from "./review.interface";
 import { Review } from "./review.model";
 
-const createReviewIntoDB = async (payload: TReview) => {
-    const result = await Review.create(payload);
-    await result.populate('createdBy', '_id username email role');
-    return result;
+const createReviewIntoDB = async (userData: JwtPayload, payload: TReview) => {
+    const review = await Review.create(payload);
+    // await result.populate('createdBy', '_id username email role');
+    return { review, userData };
 }
 const getBestCourseFromDB = async () => {
     const bestCourse = await Course.aggregate([
