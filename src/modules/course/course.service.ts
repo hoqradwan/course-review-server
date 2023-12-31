@@ -1,5 +1,4 @@
 /* eslint-disable @typescript-eslint/no-explicit-any */
-import mongoose from "mongoose";
 import { TCourse } from "./course.interface";
 import { Course } from "./course.model";
 import { Review } from "../review/review.model";
@@ -97,7 +96,10 @@ const updateCourseIntoDB = async (courseId: string, payload: Partial<TCourse>) =
         }
     }
 
-    const result = await Course.findByIdAndUpdate(courseId, { $set: modifiedUpdatedData }, { new: true, runValidators: true });
+    const result = await Course.findByIdAndUpdate(courseId, { $set: modifiedUpdatedData }, { new: true, runValidators: true }).populate(
+        'createdBy',
+        '-password -passwordHistory -updatePasswordAt -createdAt -updatedAt -__v -id',
+    );
     return result;
 }
 
