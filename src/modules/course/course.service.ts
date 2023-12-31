@@ -71,24 +71,7 @@ const getAllCoursesFromDB = async (query: Record<string, unknown>) => {
 
     return { courses, metadata };
 }
-// const getSingleCourseWithReviewFromDB = async (courseId: string) => {
-//     const coursesWithReviews = await Course.aggregate([
-//         {
-//             $match: {
-//                 _id: new mongoose.Types.ObjectId(courseId),
-//             },
-//         },
-//         {
-//             $lookup: {
-//                 from: 'reviews',
-//                 localField: '_id',
-//                 foreignField: 'courseId',
-//                 as: 'reviews',
-//             },
-//         },
-//     ])
-//     return coursesWithReviews;
-// }
+
 const getSingleCourseWithReviewFromDB = async (courseId: string) => {
     const course = await Course.findById(courseId).populate({ path: "createdBy", select: '_id username email role' });
 
@@ -96,13 +79,13 @@ const getSingleCourseWithReviewFromDB = async (courseId: string) => {
         throw new Error('Course not found');
     }
 
-    const reviews = await Review.find({ courseId: course._id });
-    // select: '_id username email role'
+    const reviews = await Review.find({ courseId: course._id }).populate({ path: "createdBy", select: '_id username email role' });
     return {
         course,
         reviews,
     };
 };
+
 const updateCourseIntoDB = async (courseId: string, payload: Partial<TCourse>) => {
     const { details, ...remainingUpdateData } = payload;
     const modifiedUpdatedData: Record<string, unknown> = {

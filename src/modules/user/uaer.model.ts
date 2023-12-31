@@ -30,12 +30,22 @@ const userSchema = new Schema<TUser, UserModel>({
         type: String,
         required: true,
     },
+    updatePasswordAt: {
+        type: Date,
+        default: null,
+    },
     role: {
         type: String,
         enum: ['user', 'admin'],
         default: 'user',
     },
-    passwordChangeHistory: [PasswordChangeHistorySchema]
+    // passwordChangeHistory: [PasswordChangeHistorySchema]
+    passwordHistory: [
+        {
+            password: String,
+            updatePasswordAt: Date,
+        },
+    ],
 
 }, {
     timestamps: true
